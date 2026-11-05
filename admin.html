@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#14271f">
+  <title>Admin access | Finds & Choices GH</title>
+  <style>
+    :root{--forest:#14271f;--lime:#dcef91;--paper:#f5f7f3;--ink:#18251e;--muted:#68786e;--line:#e1e8e0}
+    *{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.5 Inter,system-ui,Arial,sans-serif}.wrap{width:min(650px,calc(100% - 32px));margin:48px auto}.brand{display:flex;align-items:center;gap:10px;color:var(--forest);font-weight:900;text-decoration:none}.mark{width:42px;height:42px;border-radius:13px;background:var(--lime);display:grid;place-items:center}.panel{margin-top:24px;padding:28px;background:#fff;border:1px solid var(--line);border-radius:20px;box-shadow:0 16px 40px #14271f0d}h1{margin:0;letter-spacing:-.04em}.muted{color:var(--muted);font-size:.9rem}button{border:0;border-radius:999px;padding:12px 18px;background:var(--forest);color:#fff;font-weight:850;cursor:pointer}button.secondary{background:#edf3ed;color:var(--forest)}.status{margin-top:15px;padding:12px;border-radius:10px;background:#edf4ee;font-size:.9rem}.hidden{display:none!important}.back{display:inline-block;margin-top:20px;color:var(--forest);text-decoration:none;font-weight:750}
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <a class="brand" href="index.html"><span class="mark">F&amp;C</span><span>Finds &amp; Choices GH</span></a>
+    <section class="panel">
+      <p class="muted">RESTRICTED AREA</p>
+      <h1>Admin dashboard</h1>
+      <p id="message" class="muted">Checking your account permissions…</p>
+      <div id="adminContent" class="hidden">
+        <p>You are signed in with an administrator account.</p>
+        <p class="muted">Authentication is active. Product-management tools can be added in a later stage after the catalogue is moved into a protected database table.</p>
+        <button id="adminSignOut" type="button">Sign out</button>
+      </div>
+      <div id="deniedActions" class="hidden">
+        <a href="auth.html">Go to sign in</a>
+        <button id="deniedSignOut" class="secondary" type="button">Sign out</button>
+      </div>
+    </section>
+    <a class="back" href="index.html">← Back to the store</a>
+  </main>
+  <script type="module" src="assets/js/admin.js"></script>
+</body>
+</html>
