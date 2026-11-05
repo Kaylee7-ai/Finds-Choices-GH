@@ -1,100 +1,55 @@
-# Finds & Choices GH — Authentication setup
+# Finds & Choices GH — setup and launch checklist
 
-This repository is a static GitHub Pages storefront. Authentication is provided by Supabase; GitHub Pages does not run a private server.
+## Current architecture
+- GitHub Pages serves the static storefront.
+- Supabase Auth handles customer sign-up, sign-in, email confirmation and password reset.
+- Supabase Postgres stores profiles and the product catalogue.
+- RLS makes active products public and restricts product creation, edits and archiving to the administrator role.
+- Affiliate checkout remains on the retailer's site. This website does not take customer payments or fulfil orders.
 
-## What this stage adds
+## Supabase project already connected
+Project URL: https://ogvrwtuczajygkqhlsgq.supabase.co
+The public publishable key is configured in `assets/js/supabase-config.js`. It is intended for browser use. Never place a secret/service-role key or database password in frontend code or GitHub.
 
-- Customer email/password registration and sign-in.
-- Email confirmation and password-reset flow.
-- Persistent Supabase-managed browser sessions.
-- A protected admin page that checks the signed-in user's database role.
-- A profile table where new users are always assigned the `customer` role.
-- Row Level Security (RLS) so a customer can read only their own profile.
+The schema migration `profiles_and_admin_managed_product_catalogue` has been applied to the connected project. Both `profiles` and `products` have RLS enabled. The security advisor returned no security lints at the time of setup.
 
-The existing product cards and external retailer checkout links remain unchanged. The admin page is an authentication foundation, not yet a product/order management system.
+## Configure Auth before testing
+In Supabase → Authentication → URL Configuration:
+- Site URL: `https://kaylee7-ai.github.io/Finds-Choices-GH/`
+- Add `https://kaylee7-ai.github.io/Finds-Choices-GH/**` only if required for nested auth redirect paths; prefer exact URLs such as the storefront and `auth.html`.
+- Ensure email confirmation is enabled and configure a reliable email sender before public launch.
 
-## 1. Create a Supabase project
-
-Create a project in the Supabase dashboard using an account controlled by the responsible site operator. Keep database credentials private.
-
-In **Project Settings → API**, copy:
-- Project URL
-- Publishable key (or legacy anon key)
-
-Do not copy or publish the `service_role` key, database password, or any secret key.
-
-## 2. Configure the browser client
-
-Edit `assets/js/supabase-config.js`:
-
-```js
-export const SUPABASE_URL = "https://YOUR_PROJECT.supabase.co";
-export const SUPABASE_ANON_KEY = "YOUR_PUBLIC_PUBLISHABLE_OR_ANON_KEY";
-```
-
-The URL and publishable/anon key are public browser configuration. They are safe to expose only when RLS is enabled and policies are correct. They are not substitutes for database permissions.
-
-## 3. Create the database profile table
-
-In the Supabase dashboard, open **SQL Editor**, paste the complete contents of `supabase/schema.sql`, and run it.
-
-The trigger creates one profile row for every new auth user. The trigger always sets `role = 'customer'`. The browser client has no policy that permits users to change their role.
-
-## 4. Configure authentication URLs
-
-In **Authentication → URL Configuration**:
-- Set the Site URL to the published GitHub Pages site, for example `https://kaylee7-ai.github.io/Finds-Choices-GH/`.
-- Add that same site URL and the `auth.html` reset/confirmation redirect to the allowed Redirect URLs.
-- Enable email confirmations.
-- Use a properly configured email provider before public launch.
-
-If you test on localhost, add the exact local development URL to the allowed redirect list too. Do not use a broad wildcard in production.
-
-## 5. Promote the first administrator
-
-1. Register the intended administrator account through `auth.html`.
-2. Confirm its email.
-3. In Supabase SQL Editor, run the following, replacing the email with the administrator account's exact email:
-
+## Create the first administrator
+1. Register the intended site administrator through the website's `auth.html` page.
+2. Confirm that email address.
+3. In Supabase SQL Editor, replace the email below and run it:
 ```sql
 update public.profiles
 set role = 'admin'
 where id = (
-  select id
-  from auth.users
+  select id from auth.users
   where lower(email) = lower('ADMIN_EMAIL_HERE')
 );
 ```
+4. Confirm one row was updated. Sign out and back in, then visit `admin.html`.
+5. Do not create an admin self-registration feature. New sign-ups always receive customer role.
 
-4. Confirm exactly one row was updated.
-5. Sign out and sign back in, then open `admin.html`.
+## Add products
+Open `admin.html` after administrator access is assigned. Add the product name, category, retailer, product type, price, secure product URL, optional image URL and description. Set status to Active to publish it. Use the actual tracked affiliate URL issued by an approved affiliate programme; ordinary product links do not automatically earn commissions. Draft products remain private.
 
-Never add an admin-registration form or a client-side "make me admin" control. Keep administrator access limited to trusted site operators. If no profile row is updated, check that the account has registered and confirmed its email.
+## Important affiliate and age-related requirements
+Affiliate programmes have their own eligibility, disclosure, tax, and payout terms. A responsible adult must own and operate any commercial account or payout arrangement where programme rules require an adult account holder. Do not enter false ages or use another person's account without their informed permission. Confirm programme approval before describing links as commission-earning.
 
-## 6. Deploy and test
+## Test before publishing
+- Register and confirm a customer account; sign in and sign out.
+- Customer account must be denied access to `admin.html`.
+- Promote the responsible administrator using SQL; sign in again.
+- Add a draft product and verify it is not public.
+- Change it to Active and verify it appears on the storefront.
+- Edit and archive it; archived products should disappear.
+- Test search, category filters, product links and mobile layout.
+- Verify each affiliate URL is a real tracking link from an approved programme.
+- Confirm the affiliate disclosure is visible to visitors.
 
-Commit the files to the repository and allow GitHub Pages to deploy. Test the published URL:
-
-- A new user can register and receives a confirmation email.
-- An unconfirmed account cannot sign in if email confirmation is required.
-- A confirmed customer can sign in and sign out.
-- Password-reset email returns to `auth.html?mode=reset`.
-- A customer opening `admin.html` sees an access-denied message.
-- Only the manually promoted admin account sees the admin dashboard.
-- A user cannot change their role through the browser or by editing page JavaScript.
-
-Use a separate test customer and test administrator. Do not test with real customer information.
-
-## Security notes
-
-- Never store passwords yourself. Supabase Auth handles password verification.
-- Supabase manages the auth session and refresh-token lifecycle. Do not copy access or refresh tokens into custom localStorage keys.
-- The browser client uses only the public publishable/anon key.
-- Never put a service-role key in HTML, JavaScript, GitHub, or GitHub Actions logs.
-- RLS is the real data boundary. Hiding an admin page or checking a role in JavaScript is not sufficient protection for future database writes.
-- Before adding orders, addresses, payments, or customer support records, design separate tables and restrictive RLS policies. This current storefront does not collect those details or process payments.
-- Use HTTPS, keep dependencies updated, and review Supabase Auth rate limits and email settings before launch.
-
-## Current scope and next stage
-
-This first stage establishes customer and admin identity. It intentionally does not create shopping carts, payment processing, customer addresses, or database-backed product editing. A later stage can migrate the five existing product cards into a `products` table, then add admin-only product create/update/archive policies using `public.is_admin()`.
+## Scope
+This is a product-discovery and affiliate storefront, not a cart or checkout service. Customers complete purchases at the linked retailer. Search-engine indexing and rankings are not guaranteed.
