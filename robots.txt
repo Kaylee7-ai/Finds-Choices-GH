@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Disallow: /admin.html
+Disallow: /auth.html
+
+User-agent: OAI-SearchBot
+Allow: /
+
+Sitemap: https://kaylee7-ai.github.io/Finds-Choices-GH/sitemap.xml
