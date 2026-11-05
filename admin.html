@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex,nofollow"><meta name="theme-color" content="#14271f"><title>Product manager | Finds & Choices GH">
+<style>
+:root{--forest:#14271f;--lime:#dcef91;--paper:#f5f7f3;--ink:#18251e;--muted:#68786e;--line:#e1e8e0}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.5 Inter,system-ui,Arial,sans-serif}a{color:var(--forest)}.wrap{width:min(1080px,calc(100% - 30px));margin:32px auto}.head{display:flex;align-items:center;justify-content:space-between;gap:15px;flex-wrap:wrap}.brand{display:flex;align-items:center;gap:10px;color:var(--forest);font-weight:900;text-decoration:none}.mark{width:40px;height:40px;border-radius:12px;background:var(--lime);display:grid;place-items:center}.panel{margin-top:20px;padding:22px;background:#fff;border:1px solid var(--line);border-radius:18px}.muted{color:var(--muted)}h1,h2{margin:0 0 8px;letter-spacing:-.04em}h1{font-size:1.8rem}h2{font-size:1.2rem}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.field{display:flex;flex-direction:column;gap:5px}.wide{grid-column:1/-1}label{font-size:.8rem;font-weight:800}input,textarea,select{width:100%;padding:11px;border:1px solid #ccd8ce;border-radius:9px;font:inherit;background:#fff}textarea{min-height:85px;resize:vertical}button{border:0;border-radius:999px;padding:10px 16px;background:var(--forest);color:#fff;font-weight:850;cursor:pointer}button.secondary{background:#edf3ed;color:var(--forest)}button.danger{background:#fff0ed;color:#8c3025}.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:15px}.status{padding:11px 13px;border-radius:10px;background:#edf4ee;margin-top:12px}.hidden{display:none!important}.items{display:grid;gap:10px;margin-top:14px}.item{border:1px solid var(--line);border-radius:12px;padding:13px;display:flex;align-items:center;justify-content:space-between;gap:12px}.item strong{display:block}.item small{color:var(--muted)}.item-actions{display:flex;gap:7px;flex-wrap:wrap}.badge{font-size:.7rem;font-weight:800;background:#edf4ee;padding:4px 8px;border-radius:99px}@media(max-width:620px){.grid{grid-template-columns:1fr}.wide{grid-column:auto}.item{align-items:flex-start;flex-direction:column}}
+</style></head><body><main class="wrap">
+<header class="head"><a class="brand" href="index.html"><span class="mark">F&amp;C</span><span>Finds &amp; Choices GH</span></a><div class="actions"><a href="index.html">View storefront</a><button id="adminSignOut" class="secondary" type="button">Sign out</button></div></header>
+<section class="panel"><p class="muted">PRIVATE STORE MANAGEMENT</p><h1>Product manager</h1><p id="message" class="muted">Verifying administrator access…</p>
+<div id="adminContent" class="hidden">
+<p class="muted">Add products, update details, publish or archive listings. Only active products appear in the public catalogue.</p>
+<form id="productForm"><input id="productId" type="hidden"><div class="grid">
+<div class="field"><label for="name">Product name *</label><input id="name" maxlength="140" required></div>
+<div class="field"><label for="category">Category *</label><input id="category" maxlength="60" placeholder="Technology" required></div>
+<div class="field"><label for="retailer">Retailer / store</label><input id="retailer" maxlength="80" placeholder="Store name"></div>
+<div class="field"><label for="productType">Listing type</label><select id="productType"><option value="affiliate">Affiliate product</option><option value="resold">Store-resold product</option><option value="digital">Digital product</option></select></div>
+<div class="field"><label for="price">Price (GH₵)</label><input id="price" type="number" min="0" step="0.01"></div>
+<div class="field"><label for="comparePrice">Previous price (optional)</label><input id="comparePrice" type="number" min="0" step="0.01"></div>
+<div class="field wide"><label for="imageUrl">Product image URL (https://)</label><input id="imageUrl" type="url" placeholder="https://..."></div>
+<div class="field wide"><label for="productUrl">Product / tracked affiliate URL * (https://)</label><input id="productUrl" type="url" required placeholder="https://..."></div>
+<div class="field wide"><label for="description">Description</label><textarea id="description" maxlength="1200"></textarea></div>
+<div class="field"><label for="status">Publication status</label><select id="status"><option value="draft">Draft (not public)</option><option value="active">Active (public)</option><option value="archived">Archived</option></select></div>
+</div><div class="actions"><button type="submit" id="saveButton">Save product</button><button type="button" class="secondary" id="clearButton">Clear form</button></div></form>
+<div id="formStatus" class="status hidden" role="status"></div>
+</div><div id="deniedActions" class="hidden"><a href="auth.html">Go to sign in</a></div></section>
+<section id="catalogPanel" class="panel hidden"><h2>Your catalogue</h2><p class="muted">Edit an item to update it. Archive products you no longer want displayed.</p><div id="productList" class="items"></div></section>
+<a href="index.html">← Back to storefront</a></main><script type="module" src="assets/js/admin.js"></script></body></html>

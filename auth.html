@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="theme-color" content="#14271f">
+  <title>My account | Finds & Choices GH</title>
+  <style>
+    :root{--forest:#14271f;--green:#244b38;--lime:#dcef91;--paper:#f5f7f3;--ink:#18251e;--muted:#68786e;--line:#e1e8e0}
+    *{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.5 Inter,system-ui,Arial,sans-serif}
+    a{color:var(--green)}.wrap{width:min(520px,calc(100% - 32px));margin:42px auto}.brand{display:flex;gap:10px;align-items:center;text-decoration:none;color:var(--forest);font-weight:900;font-size:1.1rem}.mark{width:42px;height:42px;border-radius:13px;background:var(--lime);display:grid;place-items:center}
+    .panel{margin-top:24px;padding:26px;background:white;border:1px solid var(--line);border-radius:20px;box-shadow:0 16px 40px #14271f0d}
+    h1{margin:0 0 6px;letter-spacing:-.04em}.muted{color:var(--muted);font-size:.9rem;margin-top:0}.tabs{display:flex;gap:8px;margin:20px 0}.tabs button,.submit{border:0;border-radius:999px;padding:11px 17px;font-weight:800;cursor:pointer}.tabs button{background:#edf3ed;color:var(--forest)}.tabs button[aria-selected=true],.submit{background:var(--forest);color:white}
+    label{display:block;font-size:.83rem;font-weight:800;margin:14px 0 6px}input{width:100%;padding:12px 13px;border:1px solid #ccd8ce;border-radius:10px;font:inherit}input:focus{outline:2px solid #a8d9b8;border-color:var(--green)}.submit{width:100%;margin-top:18px}.link-btn{border:0;background:none;color:var(--green);text-decoration:underline;cursor:pointer;font:inherit;font-size:.86rem;margin-top:12px;padding:0}.status{margin-top:14px;padding:11px 13px;border-radius:10px;background:#edf4ee;color:var(--forest);font-size:.87rem;display:none}.status.show{display:block}.status.error{background:#fff0ed;color:#8c3025}.hidden{display:none!important}.back{display:inline-block;margin-top:20px;text-decoration:none;font-weight:750;font-size:.9rem}
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <a class="brand" href="index.html"><span class="mark">F&amp;C</span><span>Finds &amp; Choices GH</span></a>
+    <section class="panel">
+      <h1>Welcome back</h1>
+      <p class="muted">Sign in to your customer account or create one.</p>
+      <div id="authTabs" class="tabs" role="tablist">
+        <button type="button" id="loginTab" aria-selected="true">Sign in</button>
+        <button type="button" id="signupTab" aria-selected="false">Create account</button>
+      </div>
+      <form id="loginForm">
+        <label for="loginEmail">Email address</label><input id="loginEmail" type="email" autocomplete="email" required>
+        <label for="loginPassword">Password</label><input id="loginPassword" type="password" autocomplete="current-password" required minlength="8">
+        <button class="submit" type="submit">Sign in</button>
+        <button class="link-btn" id="forgotButton" type="button">Forgot your password?</button>
+      </form>
+      <form id="signupForm" class="hidden">
+        <label for="displayName">Name</label><input id="displayName" type="text" autocomplete="name" maxlength="80" required>
+        <label for="signupEmail">Email address</label><input id="signupEmail" type="email" autocomplete="email" required>
+        <label for="signupPassword">Create password</label><input id="signupPassword" type="password" autocomplete="new-password" minlength="8" required>
+        <button class="submit" type="submit">Create customer account</button>
+      </form>
+      <form id="resetForm" class="hidden">
+        <p class="muted">Choose a new password for your account.</p>
+        <label for="newPassword">New password</label><input id="newPassword" type="password" autocomplete="new-password" minlength="8" required>
+        <button class="submit" type="submit">Update password</button>
+      </form>
+      <div id="signedIn" class="hidden">
+        <p id="signedInText"></p>
+        <a id="adminLink" class="hidden" href="admin.html">Open admin dashboard</a>
+        <button class="submit" id="signOutButton" type="button">Sign out</button>
+      </div>
+      <div id="status" class="status" role="status" aria-live="polite"></div>
+    </section>
+    <a class="back" href="index.html">← Back to the store</a>
+  </main>
+  <script type="module" src="assets/js/auth.js"></script>
+</body>
+</html>
