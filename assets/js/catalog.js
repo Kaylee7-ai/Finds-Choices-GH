@@ -6,7 +6,6 @@ if(grid){
   try{
     const {data,error}=await supabase.from("products").select("id,name,description,category,retailer,product_type,price,compare_at_price,image_url,product_url").eq("status","active").order("created_at",{ascending:false});
     if(!error&&data&&data.length){
-      grid.replaceChildren();
       for(const p of data){
         const card=make("article","product-card");card.dataset.category=p.category;card.dataset.search=[p.name,p.description,p.category,p.retailer].join(" ").toLowerCase();
         const wrap=make("div","product-image-wrap");
@@ -18,7 +17,7 @@ if(grid){
         if(p.product_type==="affiliate")body.append(make("small","product-note","Affiliate listing: we may earn a commission if you buy through this link, at no extra cost to you."));
         card.append(wrap,body);grid.append(card);
       }
-      const count=document.getElementById("catalogCount");if(count)count.textContent=data.length+" products";
+      const count=document.getElementById("catalogCount");if(count)count.textContent=grid.children.length+" products";
     }
     // If the database has no active products, the original curated static catalogue remains visible.
   }catch(e){console.warn("Could not load live catalogue; showing existing catalogue.",e);}
