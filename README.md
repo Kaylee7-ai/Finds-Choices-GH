@@ -1,49 +1,51 @@
-# Finds & Choices GH — starter website
+# Finds & Choices GH
 
-This is a simple, responsive static website starter for an educational product-discovery brand. The name is only a working name; check name availability and choose your final brand name before publishing.
+A responsive, static product-discovery storefront for shoppers in Ghana.
 
-## Important before launch
-
-- Tezeon's published Terms of Service (updated 26 May 2026) say account holders must be at least 18. Do not create or operate a Tezeon account if you are under 18. Ask a parent/guardian to contact Tezeon and get written clarification about a permitted guardian-managed arrangement first.
-- The site contains no affiliate links. Do not add them until the account arrangement and promotional permissions are confirmed.
-- Do not copy Tezeon product photographs, logos, descriptions or other protected material without permission. Ask Tezeon what affiliate creatives are licensed for use. Use your own original graphics and writing in the meantime.
-- Do not publish unverified prices, stock, shipping times, product claims or personal testing claims.
-- Keep personal details, home address, school, phone number and private account details off the public site.
-
-## Files
-
-- `index.html` — the complete site. It includes responsive styling, category filters, and a guide search.
-- `content-plan.md` — an initial two-week content plan.
-- `video-scripts.md` — scripts for short, faceless educational videos.
-
-## Preview on your computer
-
-1. Download and unzip the folder.
-2. Open `index.html` in a web browser.
-3. Test the search box, category filters and mobile layout.
+## Current features
+- Responsive shopping homepage
+- Product search across the site's curated catalogue
+- Product-type filters: all, store-resold products, affiliate picks and digital products
+- Category shortcuts
+- External marketplace search links for Amazon, eBay and AliExpress
+- Marketplace directory for Amazon, eBay, AliExpress, Payhip, Digitstem and Tezeon
+- Customer-facing affiliate disclosure and independent-store description
 
 ## Publish with GitHub Pages
+1. Open the repository's root folder.
+2. Upload `index.html` and `README.md`.
+3. Commit directly to `main`.
+4. In Settings → Pages, select **Deploy from a branch**, branch `main`, folder `/(root)`.
 
-1. Sign in to your permitted GitHub account.
-2. Create a new **public** repository, for example `finds-choices-gh` (subject to final brand choice).
-3. Upload `index.html` to the repository's top level. You can also upload the Markdown planning files, but they are not needed for the website to run.
-4. Open the repository's **Settings** → **Pages**.
-5. Under **Build and deployment**, choose **Deploy from a branch**.
-6. Select the `main` branch and `/ (root)` folder, then save.
-7. Wait for GitHub Pages to publish and open the provided site address.
+## How the catalogue works
+The website searches the product records in the `products` array near the bottom of `index.html`. The catalogue is intentionally empty until real products have been checked and approved for publication. This avoids displaying invented products, prices, availability or seller details.
 
-A GitHub Pages website is public. Do not put passwords, private keys, personal addresses, private phone numbers or other confidential information in the repository.
+To add a product, add an object to the `products` array using this structure:
 
-## First content workflow
+```js
+{
+  id: "item-001",
+  name: "Accurate product name",
+  category: "Technology",
+  type: "resale", // resale, affiliate, or digital
+  price: "GH₵ 250.00",
+  description: "A short, accurate description.",
+  image: "https://approved-image-location.example/image.jpg",
+  source: "Our collection",
+  url: "https://approved-product-or-order-destination.example",
+  searchTerms: "wireless mouse computer accessory"
+}
+```
 
-For each guide:
-1. Pick one specific question shoppers ask.
-2. Research official product specifications, seller details, warranty/returns and current price on the day you write.
-3. Separate verified facts from your own general advice.
-4. Explain who the product may suit and what the buyer should check.
-5. Add a date last checked and link to primary retailer information where permitted.
-6. If a permitted affiliate link is later added, label it clearly and place a disclosure near the recommendation.
+Only publish products once the current product details, price, stock, permitted image use, fulfilment route, delivery fees, return terms and destination link have been verified.
 
-## Customising the site
+## Important operating distinctions
+- **Resale listing:** The store sets and displays its own selling price and is responsible for its customer-facing sale terms. Do not activate an order route until the responsible adult business operator has confirmed account eligibility, fulfilment and permission to advertise the supplier's products through this website.
+- **Affiliate listing:** The customer buys from the external retailer. Use only the exact tracking URL generated by the relevant approved affiliate programme. A normal marketplace search link is not an affiliate link and does not itself earn commission.
+- **External marketplace search:** These buttons simply open marketplace search pages. They do not provide live inventory, live prices or commission tracking.
 
-Open `index.html` in a code editor. Change the brand name, introductory text and guide cards. Keep the disclosure notice accurate. The guide cards are topic ideas, not claims that a particular product has been tested or is currently available.
+## Tendo note
+Tendo's published Terms and Conditions state that users must be at least 18 and capable of forming legally binding contracts. They also state that the reseller remains responsible for the relationship and fulfilment owed to the end customer. A person under 18 must not register, operate or use a Tendo account. Any adult-run business must be genuinely owned and operated by the eligible adult, who should confirm with Tendo that external website promotion and use of product content are permitted before publishing Tendo-sourced products.
+
+## Privacy and customer orders
+This static starter does not collect customer names, phone numbers, addresses or payments. Do not add an order form or collect customer information until the responsible adult business operator has established lawful customer terms, a privacy notice, secure processing and a confirmed fulfilment process.
