@@ -48,3 +48,22 @@ After a commit, allow GitHub Pages to deploy, then open the published storefront
 - **Affiliate listing:** Customers buy from the external retailer. A valid, approved affiliate tracking link is required for commission attribution.
 - **Resale listing:** The store operator is responsible for the customer-facing sale, fulfilment, delivery terms and returns. Do not activate resale checkout until the adult business operator has confirmed the supplier arrangement and applicable permissions.
 - **Privacy:** This static website does not collect customer details or payments. Do not add order forms or collect personal information until a lawful, secure order and privacy process is in place.
+
+
+## Customer and administrator authentication
+
+The `feature/customer-admin-auth` branch adds a Supabase-based authentication foundation.
+
+- `auth.html` — customer registration, sign-in, sign-out and password reset.
+- `admin.html` — administrator-only landing page.
+- `assets/js/` — Supabase browser client and authentication logic.
+- `supabase/schema.sql` — profiles table, customer-default signup trigger, RLS and admin-role helper.
+- `AUTH_SETUP.md` — project setup, redirect configuration, administrator promotion and testing.
+
+### Setup required before use
+
+Authentication will not work until a Supabase project is created, its project URL and public publishable/anon key are added to `assets/js/supabase-config.js`, and `supabase/schema.sql` is run in that project's SQL Editor. Follow `AUTH_SETUP.md`.
+
+The browser configuration must never contain a Supabase service-role key or database password. New registrations receive the `customer` role; the first administrator is promoted manually by a trusted project operator in the Supabase SQL Editor.
+
+This authentication branch does not yet implement product management, cart/checkout, order records or payment processing.
