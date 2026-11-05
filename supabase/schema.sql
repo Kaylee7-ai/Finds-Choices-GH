@@ -67,8 +67,12 @@ alter table public.products enable row level security;
 grant select on public.products to anon, authenticated;
 grant insert, update, delete on public.products to authenticated;
 drop policy if exists "Anyone can view active products" on public.products;
-create policy "Anyone can view active products" on public.products
-for select to anon, authenticated using (status = 'active' or (select private.is_admin()));
+drop policy if exists "Public can view active products" on public.products;
+drop policy if exists "Authenticated users can view active products and admins all products" on public.products;
+create policy "Public can view active products" on public.products
+for select to anon using (status = 'active');
+create policy "Authenticated users can view active products and admins all products" on public.products
+for select to authenticated using (status = 'active' or (select private.is_admin()));
 drop policy if exists "Admins can insert products" on public.products;
 create policy "Admins can insert products" on public.products
 for insert to authenticated with check ((select private.is_admin()));
