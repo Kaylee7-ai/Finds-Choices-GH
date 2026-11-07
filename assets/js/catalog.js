@@ -1,24 +1,106 @@
 import { supabase } from "./supabase-client.js";
-const grid=document.getElementById("productGrid");
-if(grid){
-  const money=(v)=>v==null?"":new Intl.NumberFormat("en-GH",{style:"currency",currency:"GHS",maximumFractionDigits:2}).format(Number(v));
-  const make=(tag,cls,text)=>{const el=document.createElement(tag);if(cls)el.className=cls;if(text!==undefined)el.textContent=text;return el;};
-  try{
-    const {data,error}=await supabase.from("products").select("id,name,description,category,retailer,product_type,price,compare_at_price,image_url,product_url").eq("status","active").order("created_at",{ascending:false});
-    if(!error&&data&&data.length){
-      for(const p of data){
-        const card=make("article","product-card");card.dataset.category=p.category;card.dataset.search=[p.name,p.description,p.category,p.retailer].join(" ").toLowerCase();
-        const wrap=make("div","product-image-wrap");
-        if(p.image_url){const img=make("img","product-image");img.src=p.image_url;img.alt=p.name;img.loading="lazy";img.referrerPolicy="no-referrer";img.onerror=()=>{img.remove();wrap.append(make("span","muted","Image unavailable"));};wrap.append(img);}else wrap.append(make("span","muted","Product image"));
-        const body=make("div","product-content"),meta=make("div","product-meta");meta.append(make("span","category-pill",p.category),make("span","retailer",p.retailer||"Store listing"));
-        body.append(meta,make("h3","",p.name),make("p","description",p.description||""));
-        const price=make("div","price-row");if(p.price!=null)price.append(make("strong","",money(p.price)));if(p.compare_at_price!=null)price.append(make("span","old-price",money(p.compare_at_price)));body.append(price);
-        const link=make("a","shop-button","Continue to retailer ↗");link.href=p.product_url;link.target="_blank";link.rel="sponsored nofollow noopener noreferrer";body.append(link);
-        if(p.product_type==="affiliate")body.append(make("small","product-note","Affiliate listing: we may earn a commission if you buy through this link, at no extra cost to you."));
-        card.append(wrap,body);grid.append(card);
-      }
-      const count=document.getElementById("catalogCount");if(count)count.textContent=grid.children.length+" products";
+
+const grid = document.getElementById("productGrid");
+if (grid) {
+  const money = value => value == null
+    ? ""
+    : new Intl.NumberFormat("en-GH", {
+        style: "currency",
+        currency: "GHS",
+        maximumFractionDigits: 2
+      }).format(Number(value));
+
+  const make = (tag, className, value) => {
+    const element = document.createElement(tag);
+    if (className) element.className = className;
+    if (value !== undefined) element.textContent = value;
+    return element;
+  };
+
+  try {
+    const { data, error } = await supabase
+      .from("products")
+      .select("id,name,description,category,retailer,product_type,price,compare_at_price,image_url,product_url")
+      .eq("status", "active")
+      .order("created_at", { ascending: false });
+
+    if (error) throw error;
+
+    // Keep the hand-curated HTML catalogue as a fallback only.
+    // Once live products exist, replace the fallback instead of duplicating it.
+    if (Array.isArray(data) && data.length > 0) {
+      const cards = data.map(product => {
+        const card = make("article", "product-card");
+        card.dataset.category = product.category || "Other";
+        card.dataset.search = [
+          product.name,
+          product.description,
+          product.category,
+          product.retailer
+        ].filter(Boolean).join(" ").toLocaleLowerCase();
+
+        const imageWrap = make("div", "product-image-wrap");
+        if (product.image_url) {
+          const image = make("img", "product-image");
+          image.src = product.image_url;
+          image.alt = product.name || "Product image";
+          image.loading = "lazy";
+          image.referrerPolicy = "no-referrer";
+          image.addEventListener("error", () => {
+            image.remove();
+            if (!imageWrap.querySelector(".image-fallback")) {
+              imageWrap.append(make("span", "muted image-fallback", "Image unavailable"));
+            }
+          }, { once: true });
+          imageWrap.append(image);
+        } else {
+          imageWrap.append(make("span", "muted image-fallback", "Image unavailable"));
+        }
+
+        const content = make("div", "product-content");
+        const meta = make("div", "product-meta");
+        meta.append(
+          make("span", "category-pill", product.category || "Other"),
+          make("span", "retailer", product.retailer || "Store listing")
+        );
+
+        content.append(
+          meta,
+          make("h3", "", product.name || "Untitled product"),
+          make("p", "description", product.description || "View the retailer listing for product details.")
+        );
+
+        const priceRow = make("div", "price-row");
+        if (product.price != null) priceRow.append(make("strong", "", money(product.price)));
+        if (product.compare_at_price != null) {
+          priceRow.append(make("span", "old-price", money(product.compare_at_price)));
+        }
+        content.append(priceRow);
+
+        const link = make("a", "shop-button", "Continue to retailer ↗");
+        link.href = product.product_url;
+        link.target = "_blank";
+        link.rel = "sponsored nofollow noopener noreferrer";
+        link.setAttribute("aria-label", `View ${product.name || "product"} at ${product.retailer || "the retailer"}`);
+        content.append(link);
+
+        if (product.product_type === "affiliate") {
+          content.append(make(
+            "small",
+            "product-note",
+            "Affiliate disclosure: we may earn a commission if you purchase through this link, at no extra cost to you."
+          ));
+        }
+
+        card.append(imageWrap, content);
+        return card;
+      });
+
+      grid.replaceChildren(...cards);
+      grid.dispatchEvent(new CustomEvent("catalog:updated"));
     }
-    // If the database has no active products, the original curated static catalogue remains visible.
-  }catch(e){console.warn("Could not load live catalogue; showing existing catalogue.",e);}
+  } catch (error) {
+    // A failed or empty database request must not remove the working fallback.
+    console.warn("Live catalogue unavailable; showing the curated catalogue.", error);
+  }
 }
