@@ -60,7 +60,9 @@ if (grid) {
         }
         if (price.childElementCount) body.append(price);
 
-        const type = String(product.product_type || "retailer").toLowerCase();
+        const rawType = String(product.product_type || "retailer").toLowerCase();
+        // The admin form stores resold; accept resale too for older records.
+        const type = rawType === "resold" ? "resale" : rawType;
         const ctaLabel = type === "digital" ? "View digital product ↗" :
           type === "resale" ? "View product details ↗" : "View at retailer ↗";
         const link = make("a", "shop-button", ctaLabel);
