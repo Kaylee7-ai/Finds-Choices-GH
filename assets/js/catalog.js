@@ -20,10 +20,19 @@ if (grid) {
       .order("created_at", { ascending: false });
 
     if (!error && Array.isArray(data) && data.length) {
-      // Prefer the live catalogue as a whole; never mix it with stale fallback cards.
-      grid.replaceChildren();
+      // Preserve curated homepage cards and append only genuinely new live products.
+      // A matching fallback card is already the best available presentation until
+      // its real supplier image is hosted; do not replace it with an empty-image card.
+      const normalizeName = value => String(value || "")
+        .normalize("NFKD").replace(/[\\u0300-\\u036f]/g, "")
+        .toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
 
       for (const product of data) {
+        const productName = normalizeName(product.name);
+        const alreadyListed = [...grid.querySelectorAll(".product-card")]
+          .some(existing => normalizeName(existing.querySelector("h3")?.textContent) === productName);
+        if (alreadyListed) continue;
+
         const card = make("article", "product-card");
         card.dataset.category = product.category || "";
         card.dataset.search = [product.name, product.description, product.category, product.retailer].join(" ").toLowerCase();
