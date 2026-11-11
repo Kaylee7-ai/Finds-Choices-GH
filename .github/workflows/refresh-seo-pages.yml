@@ -1,0 +1,64 @@
+name: Refresh SEO product pages
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "scripts/generate-seo-pages.mjs"
+      - "assets/js/catalog.js"
+      - "index.html"
+      - ".github/workflows/refresh-seo-pages.yml"
+  schedule:
+    - cron: "17 */6 * * *"
+  push:
+    branches: [main]
+    paths:
+      - "scripts/generate-seo-pages.mjs"
+      - "assets/js/supabase-config.js"
+      - ".github/workflows/refresh-seo-pages.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: refresh-seo-pages
+  cancel-in-progress: false
+
+jobs:
+  validate:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Check generator syntax
+        run: node --check scripts/generate-seo-pages.mjs
+
+  generate:
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Generate crawlable pages from active catalogue
+        run: node scripts/generate-seo-pages.mjs
+      - name: Commit generated pages for GitHub Pages
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add products categories sitemap.xml
+          if git diff --cached --quiet; then
+            echo "No generated SEO changes."
+          else
+            git commit -m "chore: refresh SEO product and category pages"
+            git push origin HEAD:main
+          fi
