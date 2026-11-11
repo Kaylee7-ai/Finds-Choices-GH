@@ -57,7 +57,7 @@ async function main() {
  const raw=await response.json();
  if(!Array.isArray(raw)) throw new Error("Unexpected Supabase catalogue response.");
  const products=raw.filter(p=>p&&p.id&&p.name&&https(p.product_url));
- if(raw.length&&!products.length) throw new Error("Active catalogue rows were returned, but none had valid HTTPS product links. Refusing to publish empty pages.");
+ if(!products.length) throw new Error("No active products with valid HTTPS retailer links were returned. Keeping the existing generated pages unchanged.");
  const pr=path.join(ROOT,"products"), cr=path.join(ROOT,"categories");
  await fs.rm(pr,{recursive:true,force:true}); await fs.rm(cr,{recursive:true,force:true});
  await fs.mkdir(pr,{recursive:true}); await fs.mkdir(cr,{recursive:true});
