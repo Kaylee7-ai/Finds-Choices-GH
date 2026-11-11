@@ -74,6 +74,16 @@ if (grid) {
         link.setAttribute("aria-label", ctaLabel + " — " + (product.name || "product"));
         body.append(link);
 
+        const slugify = value => String(value || "product")
+          .normalize("NFKD").replace(/[\\u0300-\\u036f]/g, "")
+          .toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "product";
+        const productIdSuffix = String(product.id || "").replace(/[^a-zA-Z0-9]/g, "").slice(-8).toLowerCase();
+        const detailLink = make("a", "product-note", "Read product details and compare ↗");
+        detailLink.href = "products/" + slugify(product.name) + "-" + productIdSuffix + "/";
+        detailLink.setAttribute("aria-label", "Read details for " + (product.name || "product"));
+        body.append(detailLink);
+
+
         if (type === "affiliate") {
           body.append(make("small", "product-note",
             "Affiliate disclosure: we may earn a commission if you purchase through this link, at no extra cost to you."));
