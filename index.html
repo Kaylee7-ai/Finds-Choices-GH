@@ -120,42 +120,68 @@ body{background:var(--paper);letter-spacing:-.008em}
 <footer class="footer"><div class="container"><div class="footer-row"><div><div class="footer-brand">Finds &amp; Choices GH</div><p>Discover useful products from selected shopping destinations in Ghana.</p></div><nav class="footer-links"><a href="#catalog">Shop products</a><a href="#categories">Categories</a><a href="#about">About</a></nav></div><div class="disclosure"><strong>Shopping disclosure:</strong> The buttons on this version open ordinary Tezeon product pages. Affiliate tracking is not enabled in this public preview. If an eligible adult account holder later activates approved affiliate links, this notice will be updated to disclose that relationship.</div><div class="copyright">© <span id="year"></span> Finds &amp; Choices GH</div></div></footer>
 <script>
 (() => {
-  const input = document.getElementById('siteSearch');
-  const form = document.getElementById('searchForm');
-  const cards = Array.from(document.querySelectorAll('.product-card'));
-  const count = document.getElementById('catalogCount');
-  const empty = document.getElementById('emptyState');
-  let category = 'all';
-  document.getElementById('year').textContent = new Date().getFullYear();
-  function applyFilters(){
-    const q = input.value.trim().toLowerCase();
+  const input = document.getElementById("siteSearch");
+  const form = document.getElementById("searchForm");
+  const grid = document.getElementById("productGrid");
+  const count = document.getElementById("catalogCount");
+  const empty = document.getElementById("emptyState");
+  let category = "all";
+
+  document.getElementById("year").textContent = new Date().getFullYear();
+
+  function applyFilters() {
+    const query = input.value.trim().toLocaleLowerCase();
+    const cards = Array.from(grid.querySelectorAll(".product-card"));
     let visible = 0;
+
     cards.forEach(card => {
-      const text = card.dataset.search || '';
-      const cat = card.dataset.category || '';
-      const matchesText = !q || text.includes(q);
-      const matchesCategory = category === 'all' || cat === category;
-      const show = matchesText && matchesCategory;
+      const searchableText = (card.dataset.search || "").toLocaleLowerCase();
+      const cardCategory = card.dataset.category || "";
+      const matchesQuery = !query || searchableText.includes(query);
+      const matchesCategory = category === "all" || cardCategory === category;
+      const show = matchesQuery && matchesCategory;
       card.hidden = !show;
-      if(show) visible++;
+      if (show) visible++;
     });
-    count.textContent = `${visible} ${visible === 1 ? 'product' : 'products'}`;
-    empty.classList.toggle('visible', visible === 0);
+
+    count.textContent = `${visible} ${visible === 1 ? "product" : "products"}`;
+    empty.classList.toggle("visible", visible === 0);
   }
-  form.addEventListener('submit', event => { event.preventDefault(); applyFilters(); document.getElementById('catalog').scrollIntoView({behavior:'smooth'}); });
-  input.addEventListener('input', applyFilters);
-  document.querySelectorAll('[data-filter]').forEach(button => button.addEventListener('click', () => {
-    category = button.dataset.filter;
-    document.querySelectorAll('[data-filter]').forEach(item => item.classList.toggle('active', item === button));
+
+  form.addEventListener("submit", event => {
+    event.preventDefault();
     applyFilters();
-  }));
-  document.querySelectorAll('[data-category]').forEach(link => link.addEventListener('click', () => {
-    const value = link.dataset.category;
-    if(value === 'All'){ category = 'all'; input.value = ''; }
-    else { category = value; input.value = ''; }
-    document.querySelectorAll('[data-filter]').forEach(item => item.classList.toggle('active', item.dataset.filter === category));
-    applyFilters();
-  }));
+    document.getElementById("catalog").scrollIntoView({ behavior: "smooth" });
+  });
+
+  input.addEventListener("input", applyFilters);
+
+  document.querySelectorAll("[data-filter]").forEach(button => {
+    button.addEventListener("click", () => {
+      category = button.dataset.filter;
+      document.querySelectorAll("[data-filter]").forEach(item => {
+        item.classList.toggle("active", item === button);
+      });
+      applyFilters();
+    });
+  });
+
+  // Only category shortcut tiles should change the selected category.
+  // Product cards also have data-category attributes, so do not bind to all of them.
+  document.querySelectorAll(".cat[data-category]").forEach(tile => {
+    tile.addEventListener("click", () => {
+      const selected = tile.dataset.category;
+      category = selected === "All" ? "all" : selected;
+      input.value = "";
+      document.querySelectorAll("[data-filter]").forEach(button => {
+        button.classList.toggle("active", button.dataset.filter === category);
+      });
+      applyFilters();
+    });
+  });
+
+  // The Supabase module fires this after replacing the fallback cards.
+  grid.addEventListener("catalog:updated", applyFilters);
   applyFilters();
 })();
 </script>
